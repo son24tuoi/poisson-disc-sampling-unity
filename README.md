@@ -42,7 +42,7 @@ Poisson Disc Sampling là một thuật toán phân bố điểm ngẫu nhiên n
 
 Trong game, kỹ thuật này được sử dụng để **tạo ra sự phân bố tự nhiên và đồng đều** của các đối tượng như cây cối, kẻ địch, vật phẩm, hoặc hiệu ứng hạt (particles) mà không bị chồng lấn hoặc tụ cụm như khi dùng phân bố ngẫu nhiên thuần túy.
 
-Ví dụ, khi bạn muốn rải các cây trên mặt đất sao cho **không có cây nào quá gần cây khác**, nhưng vẫn **giữ được cảm giác tự nhiên**, Poisson Disc Sampling là lựa chọn lý tưởng. So với grid hay random sampling thông thường, phương pháp này tạo ra kết quả **vừa đẹp mắt vừa tối ưu hiệu suất**, đặc biệt hữu ích trong các trò chơi thế giới mở, bản đồ lớn hoặc procedural generation (sinh ngẫu nhiên nội dung).
+Ví dụ, khi bạn muốn rải các cây trên mặt đất sao cho **không có cây nào quá gần cây nào**, nhưng vẫn **giữ được cảm giác tự nhiên**, Poisson Disc Sampling là lựa chọn lý tưởng. So với grid hay random sampling thông thường, phương pháp này tạo ra kết quả **vừa đẹp mắt vừa tối ưu hiệu suất**, đặc biệt hữu ích trong các trò chơi thế giới mở, bản đồ lớn hoặc procedural generation (sinh ngẫu nhiên nội dung).
 
 Poisson Disc Sampling cũng có thể mở rộng cho không gian 3D và hoạt động hiệu quả với các hệ thống LOD (Level of Detail), giúp cân bằng giữa chất lượng hiển thị và hiệu suất chơi game.
 
