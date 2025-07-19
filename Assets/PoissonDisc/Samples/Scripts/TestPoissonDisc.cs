@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace One.Utilities.PoissonDisc
+namespace One.Utilities.PoissonDisc.Sample
 {
     public class TestPoissonDisc : MonoBehaviour
     {
