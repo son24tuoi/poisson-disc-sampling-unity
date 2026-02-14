@@ -14,20 +14,32 @@ namespace One.Utilities.PoissonDisc.Sample
         public float displayRadius = 1f;
         public float intervalTime = 0.5f;
 
-        private List<Vector2> points;
+        private PoissonSampler sampler;
+        private Coroutine coroutine;
         private WaitForSeconds wait;
 
         private IEnumerator Start()
         {
+            Stop();
+
             wait = new WaitForSeconds(intervalTime);
             transform.localScale = new Vector3(regionSize.x, regionSize.y, regionSize.y);
             yield return null;
-            points = PoissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSamples);
+            sampler = new PoissonSampler(regionSize, radius, rejectionSamples);
+            coroutine = StartCoroutine(sampler.IEGeneratePoints());
 
-            for (int i = 0; i < points.Count; i++)
+            for (int i = 0; i < sampler.Count; i++)
             {
-                Spawn(points[i]);
+                Spawn(sampler[i]);
                 yield return wait;
+            }
+        }
+
+        private void Stop()
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
             }
         }
 
@@ -43,14 +55,9 @@ namespace One.Utilities.PoissonDisc.Sample
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.DrawWireCube(regionSize / 2, regionSize);
-
-            if (points != null)
+            if (sampler != null)
             {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    Gizmos.DrawSphere(points[i], displayRadius);
-                }
+                sampler.OnDrawGizmos(transform.position, displayRadius);
             }
         }
     }

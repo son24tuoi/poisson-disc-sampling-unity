@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 361594362}
   - component: {fileID: 361594361}
   m_Layer: 0
-  m_Name: Test (1)
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,12 +151,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 573c910a82165314b8b27fb57e65cbc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.3
+  texture2D: {fileID: 2800000, guid: ceeee31f5848c77408ca03ea00e6b283, type: 3}
+  radius: 1
   regionSize: {x: 100, y: 100}
   rejectionSamples: 30
   displayRadius: 0.2
-  rangeRadius: {x: 0.3, y: 3}
+  rangeRadius: {x: 1, y: 5}
   maxCount: 5000
+  easeType: 1
 --- !u!4 &361594362
 Transform:
   m_ObjectHideFlags: 0
@@ -264,54 +266,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!1 &1978106090
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1978106091}
-  - component: {fileID: 1978106092}
-  m_Layer: 0
-  m_Name: Test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1978106091
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978106090}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1978106092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978106090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93d23ebd8346d17478d424a6eb2ea5dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radius: 5
-  regionSize: {x: 100, y: 100}
-  rejectionSamples: 30
-  displayRadius: 0.5
 --- !u!1001 &1446986093853007544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -382,6 +336,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 433977784}
-  - {fileID: 1978106091}
   - {fileID: 361594362}
   - {fileID: 1446986093853007544}

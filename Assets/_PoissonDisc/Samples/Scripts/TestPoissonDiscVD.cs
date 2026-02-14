@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using One.Utilities.Easing;
 
-using Random = UnityEngine.Random;
-using UnityEngine.UI;
 
 
 #if UNITY_EDITOR
@@ -22,25 +21,24 @@ namespace One.Utilities.PoissonDisc.Sample
         public float displayRadius = 1f;
         public Vector2 rangeRadius = Vector2.one;
         public int maxCount = 1000;
+        public EaseType easeType = EaseType.Linear;
+
+        private VariableDensityPoissonSampler sampler;
+        // private TextureRadiusProvider textureRadiusProvider;
+        private RadialRadiusProvider radialRadiusProvider;
 
         private Coroutine coroutine;
-
-        public List<Vector2> points = new List<Vector2>();
 
         private void Setup()
         {
             Stop();
 
-            Vector2 center = regionSize / 2f;
+            sampler = new VariableDensityPoissonSampler(regionSize, radius, rejectionSamples, maxCount);
+            // textureRadiusProvider = new TextureRadiusProvider(texture2D, regionSize, rangeRadius.x, rangeRadius.y, 0f);
+            radialRadiusProvider = new RadialRadiusProvider(regionSize /2f, rangeRadius.x, rangeRadius.y, regionSize.magnitude / 2f, easeType);
 
-            coroutine = StartCoroutine(IEGeneratePoints(
-                points,
-                // RadiusFunc,
-                CreateRadiusFromTexture,
-                regionSize,
-                minRadius: radius,
-                numSamplesBeforeRejection: rejectionSamples
-            ));
+            // coroutine = StartCoroutine(sampler.IEGeneratePoints(textureRadiusProvider));
+            coroutine = StartCoroutine(sampler.IEGeneratePoints(radialRadiusProvider));
         }
 
         private void Stop()
@@ -79,123 +77,11 @@ namespace One.Utilities.PoissonDisc.Sample
             return Mathf.Lerp(rangeRadius.y, rangeRadius.x, density);
         }
 
-        public IEnumerator IEGeneratePoints(
-            List<Vector2> points,
-            Func<Vector2, float> radiusFunc,
-            Vector2 sampleRegionSize,
-            float minRadius,
-            int numSamplesBeforeRejection = 30)
-        {
-            float cellSize = minRadius / Mathf.Sqrt(2);
-
-            int[,] grid = new int[
-                Mathf.CeilToInt(sampleRegionSize.x / cellSize),
-                Mathf.CeilToInt(sampleRegionSize.y / cellSize)
-            ];
-
-            points.Clear();
-
-            List<Vector2> spawnPoints = new List<Vector2>();
-
-            spawnPoints.Add(sampleRegionSize / 2);
-
-            while (spawnPoints.Count > 0 && points.Count <= maxCount)
-            {
-                int spawnIndex = Random.Range(0, spawnPoints.Count);
-                Vector2 spawnCenter = spawnPoints[spawnIndex];
-                bool candidateAccepted = false;
-
-                float spawnRadius = radiusFunc(spawnCenter);
-
-                for (int i = 0; i < numSamplesBeforeRejection; i++)
-                {
-                    float angle = Random.value * Mathf.PI * 2;
-                    Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-
-                    float candidateRadius = radiusFunc(spawnCenter);
-                    Vector2 candidate = spawnCenter + dir * Random.Range(candidateRadius, candidateRadius * 2);
-
-                    if (IsValid(candidate, sampleRegionSize, cellSize, radiusFunc, points, grid))
-                    {
-                        points.Add(candidate);
-                        spawnPoints.Add(candidate);
-
-                        int cellX = (int)(candidate.x / cellSize);
-                        int cellY = (int)(candidate.y / cellSize);
-                        grid[cellX, cellY] = points.Count;
-
-                        candidateAccepted = true;
-                        break;
-                    }
-                }
-
-                if (!candidateAccepted)
-                    spawnPoints.RemoveAt(spawnIndex);
-
-                yield return null;
-            }
-        }
-
-        private bool IsValid(
-            Vector2 candidate,
-            Vector2 sampleRegionSize,
-            float cellSize,
-            Func<Vector2, float> radiusFunc,
-            List<Vector2> points,
-            int[,] grid)
-        {
-            if (candidate.x < 0 || candidate.y < 0 ||
-                candidate.x >= sampleRegionSize.x ||
-                candidate.y >= sampleRegionSize.y)
-                return false;
-
-            float candidateRadius = radiusFunc(candidate);
-
-            if (candidateRadius <= 0f)
-                return false;
-
-            float sqrRadius = candidateRadius * candidateRadius;
-
-            int cellX = (int)(candidate.x / cellSize);
-            int cellY = (int)(candidate.y / cellSize);
-
-            int cellsToCheck = Mathf.CeilToInt(candidateRadius / cellSize);
-
-            int startX = Mathf.Max(0, cellX - cellsToCheck);
-            int endX = Mathf.Min(cellX + cellsToCheck, grid.GetLength(0) - 1);
-            int startY = Mathf.Max(0, cellY - cellsToCheck);
-            int endY = Mathf.Min(cellY + cellsToCheck, grid.GetLength(1) - 1);
-
-            for (int x = startX; x <= endX; x++)
-            {
-                for (int y = startY; y <= endY; y++)
-                {
-                    int pointIndex = grid[x, y] - 1;
-                    if (pointIndex != -1)
-                    {
-                        float otherRadius = radiusFunc(points[pointIndex]);
-                        float minDist = Mathf.Max(candidateRadius, otherRadius);
-                        float sqrDist = (candidate - points[pointIndex]).sqrMagnitude;
-
-                        if (sqrDist < minDist * minDist)
-                            return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireCube(regionSize / 2, regionSize);
-
-            if (points != null)
+            if (sampler != null)
             {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    Gizmos.DrawSphere(points[i], displayRadius);
-                }
+                sampler.OnDrawGizmos(transform.position, displayRadius);
             }
         }
 

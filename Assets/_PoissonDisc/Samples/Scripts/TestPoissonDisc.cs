@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace One.Utilities.PoissonDisc.Sample
 {
     public class TestPoissonDisc : MonoBehaviour
@@ -11,24 +15,59 @@ namespace One.Utilities.PoissonDisc.Sample
         public int rejectionSamples = 30;
         public float displayRadius = 1f;
 
-        private List<Vector2> points;
+        private PoissonSampler sampler;
 
-        private void OnValidate()
+        private Coroutine coroutine;
+
+        private void Setup()
         {
-            points = PoissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSamples);
+            Stop();
+
+            sampler = new PoissonSampler(regionSize, radius, rejectionSamples);
+
+            coroutine = StartCoroutine(sampler.IEGeneratePoints());
+        }
+
+        private void Stop()
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
         }
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireCube(regionSize / 2, regionSize);
-
-            if (points != null)
+            if (sampler != null)
             {
-                for (int i = 0; i < points.Count; i++)
+                sampler.OnDrawGizmos(transform.position, displayRadius);
+            }
+        }
+
+
+
+
+#if UNITY_EDITOR
+        [CustomEditor(typeof(TestPoissonDisc))]
+        public class TestPoissonDisc_Editor : Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                base.OnInspectorGUI();
+
+                TestPoissonDisc target = (TestPoissonDisc)this.target;
+
+                if (GUILayout.Button("Generate Points"))
                 {
-                    Gizmos.DrawSphere(points[i], displayRadius);
+                    target.Setup();
+                }
+
+                if (GUILayout.Button("Stop"))
+                {
+                    target.Stop();
                 }
             }
         }
+#endif
     }
 }
