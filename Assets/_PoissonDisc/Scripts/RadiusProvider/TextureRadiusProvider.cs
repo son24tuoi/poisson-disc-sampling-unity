@@ -18,6 +18,8 @@ namespace One.Utilities.PoissonDisc
         public float MinRadius => minRadius;
         public float MaxRadius => maxRadius;
 
+        public TextureRadiusProvider() { }
+
         public TextureRadiusProvider(Texture2D densityTexture, Vector2 regionSize, float minRadius, float maxRadius, float alphaThreshold = 0.1f)
         {
             this.densityTexture = densityTexture;

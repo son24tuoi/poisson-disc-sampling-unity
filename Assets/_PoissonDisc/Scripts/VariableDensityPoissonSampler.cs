@@ -16,6 +16,15 @@ namespace One.Utilities.PoissonDisc
         [SerializeField] private int maxCount = 1000;
         [SerializeField] private List<Vector2> points;
 
+        public int Count => (points == null) ? throw new NullReferenceException() : points.Count;
+
+        public Vector2 this[int index] => (points == null) ? throw new NullReferenceException() : points[index];
+
+        public VariableDensityPoissonSampler()
+        {
+            points = new List<Vector2>();
+        }
+
         public VariableDensityPoissonSampler(Vector2 sampleRegionSize, float minRadius, int numSamplesBeforeRejection = 30, int maxCount = 1000)
         {
             this.sampleRegionSize = sampleRegionSize;

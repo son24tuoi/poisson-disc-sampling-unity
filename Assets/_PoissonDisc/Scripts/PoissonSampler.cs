@@ -17,9 +17,14 @@ namespace One.Utilities.PoissonDisc
         [SerializeField] private int maxCount = 1000;
         [SerializeField] private List<Vector2> points;
 
-        public int Count => points.Count;
-        
-        public Vector2 this[int index] => points[index];
+        public int Count => (points == null) ? throw new NullReferenceException() : points.Count;
+
+        public Vector2 this[int index] => (points == null) ? throw new NullReferenceException() : points[index];
+
+        public PoissonSampler()
+        {
+            points = new List<Vector2>();
+        }
 
         public PoissonSampler(Vector2 sampleRegionSize, float radius, int numSamplesBeforeRejection = 30, int maxCount = 1000)
         {
